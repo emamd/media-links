@@ -1,0 +1,73 @@
+<!-- 
+	Runtime:include this blurb at the bottom of your story. 
+	Wrap words you want to appear as a popup with 
+	<span class="graphic-link" data-width="XXX" data-url="XXX"></span>
+-->
+
+<link href="/includes/js/css/jquery-ui-1.8.14.custom.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+
+<style type="text/css">
+	.graphic-link {font-weight: bold; border-bottom: 1px dotted #333;}
+	.graphic-link:hover {background-color:#eee; cursor:pointer;}
+
+    /* Dialog Box Styles */
+    .ui-dialog .ui-dialog-content {background-color:#fff;}
+   	.ui-widget-overlay {background:#fff url(''); opacity: .70; filter:Alpha(Opacity=70);}
+	div.ui-dialog.ui-widget.video-player div.ui-dialog-titlebar {display:none;}
+	div.ui-dialog.ui-widget.video-player .ui-dialog-content {padding:5px 15px 15px 15px;}
+	.ui-widget-content, .ui-resizable-w, .ui-resizable-e {background:#fff url('');}
+	.ui-widget-content h3 {text-align:left; font-size:20px;}
+	.ui-widget-content p.description {text-align:left; margin-bottom:10px;}
+	.ui-widget-content p.close {margin-bottom:10px; font-family:'Arial', 'Helvetica', sans-serif; text-align:right; position:relative; }
+	p.close img {display:inline; position: relative; top: 3px;}
+    p.close a {font-weight:bold; color:#999;}	
+</style>
+
+<script type="text/javascript">
+function staticGraphic(img, wide){
+	// close button in the popup
+	var embedString = '<p class="close"><a>CLOSE <img src="http://www.latimes.com/includes/projects/population/images/close_18px.png" /></a></p>';
+	embedString += '<img src="' + img + '" />';
+	// create the box to pop up
+    var popUpBox = jQuery('<div></div>');
+	
+    var popUpWidth = parseInt(wide) + 30;
+
+    jQuery(popUpBox).html(embedString);
+    var dialogRight = (jQuery(window).width()-popUpWidth)/2;
+    var dialogTop = (jQuery(window).height()-551)/2;
+
+    jQuery(popUpBox).dialog({
+        beforeClose: function(event, ui) { 
+            jQuery(popUpBox).html('');
+		    popUpBox.dialog('destroy');
+		    embedString = "";
+		    },
+		dialogClass: 'video-player',
+        modal:true,
+        position: [dialogRight,dialogTop],
+        resizable: false,
+        show: 'slide',
+        width: popUpWidth
+    });
+
+    // Reset all variables, and blow the dialog box contents away, mostly for IE. Also done in beforeClose function above. 
+    jQuery('.ui-widget-overlay, p.close a').bind('click', function(){
+        jQuery(popUpBox).html('');
+		popUpBox.dialog('destroy');
+		embedString = "";
+		return false;
+	});
+
+    return false;
+}
+
+jQuery(document).ready(function(){
+	jQuery('.graphic-link').bind('click', function(){
+		var img = jQuery(this).attr('data-url');
+		var wide = jQuery(this).attr('data-width');
+		staticGraphic(img, wide);
+	});
+});
+</script>
