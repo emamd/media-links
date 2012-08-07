@@ -1,15 +1,25 @@
 <!-- 
 	Runtime:include this blurb at the bottom of your story. 
 	Wrap words you want to appear as a popup with 
-	<span class="graphic-link" data-width="XXX" data-url="XXX"></span>
+	<span class="media-link"></span>
+	possible attributes:
+	data-type="" - type of media. 
+	data-url="" - url of image, document, etc.
+	data-id="" - id of video to pull in
+	data-width="" - width of graphic, document, etc.
 -->
 
 <link href="/includes/js/css/jquery-ui-1.8.14.custom.css" media="all" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
 
 <style type="text/css">
-	.graphic-link {font-weight: bold; border-bottom: 1px dotted #333;}
-	.graphic-link:hover {background-color:#eee; cursor:pointer;}
+	.media-link  {font-weight: bold; color:#006DA2; border-bottom: 1px dotted #006DA2;}
+	.media-link:hover {background-color:#D2DDEA; cursor:pointer;}
+
+    /* Document Cloud styles */
+    .DC-note { border:0px; -webkit-box-shadow:0px 0px 0px #fff; box-shadow:0px 0px 0px 0px #fff; }
+    .DC-note .DC-note-title { text-align:left; font-size: 24px; font-family:"Georgia", "Times New Roman", Times, serif;}
+    .DC-note .DC-note-excerpt-wrap { border: 3px solid #FFE325; }
 
     /* Dialog Box Styles */
     .ui-dialog .ui-dialog-content {background-color:#fff;}
@@ -25,10 +35,38 @@
 </style>
 
 <script type="text/javascript">
-function staticGraphic(img, wide){
+function mediaLink(type, url, wide){
 	// close button in the popup
 	var embedString = '<p class="close"><a>CLOSE <img src="http://www.latimes.com/includes/projects/population/images/close_18px.png" /></a></p>';
-	embedString += '<img src="' + img + '" />';
+
+	// ok, here's our big switch statement to determine what gets displayed for each content type
+	switch (type) {
+		case "graphic":
+			embedString += '<img src="' + url + '" />';
+			break;
+
+		case "document":
+		// document embed code here
+			embedString += '';
+			break;
+
+		case "video-brightcove":
+			var linkBaseUrl = document.URL;
+			embedString += "<object id='myExperience207503375' class='BrightcoveExperience'><param name='bgcolor' value='#FFFFFF' /><param name='wmode' value='transparent' /><param name='autoStart' value='false' /><param name='sectionName' value ='/' /><param name='contentItemType' value ='embed' /><param name='omnitureServer' value='latimes.com' /><param name='omnitureAcct' value='tribglobal' /><param name='width' value='980' /><param name='height' value='532' /><param name='playerID' value='782523707001' /><param name='playerKey' value='AQ~~,AAAAtkVbcwk~,5Rx45u37p7At4uUFYYBfI0whp8ObLWHD' /><param name='adServerURL' value='http://ad.doubleclick.net/pfadx/trb.latimes/hp' /><param name='additionalAdTargetingParams' value=';player=bc;pos=pre;vc=News;clip=71433116;sz=3x3;tile=13;ord=3083020945' /><param name='externalAds' value='true' /><param name='linkBaseURL' value='" + linkBaseURL + "' /><param name='isVid' value='true' /><param name='isUI' value='true' /><param name='dynamicStreaming' value='true' /><param name='showNoContentMessage' value='true' /><param name='@videoPlayer' value='ref:" + vid + "' /></object>";
+			break;
+
+		case "video-youtube":
+			embedString += '<iframe width="400" height="255" src="http://www.youtube.com/embed/' + vid + '?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>';
+			break;
+
+		case "video-vimeo":
+			embedString += '';
+			break;
+
+		case "video-ndn":
+			embedString += '';
+			break; 
+	}
 	// create the box to pop up
     var popUpBox = jQuery('<div></div>');
 	
@@ -64,10 +102,13 @@ function staticGraphic(img, wide){
 }
 
 jQuery(document).ready(function(){
-	jQuery('.graphic-link').bind('click', function(){
-		var img = jQuery(this).attr('data-url');
-		var wide = jQuery(this).attr('data-width');
-		staticGraphic(img, wide);
+	jQuery('.media-link').bind('click', function(){
+		$this = jQuery(this);
+		var type = $this.attr('data-type');
+		var url = $this.attr('data-url');
+		var vid = $this.attr('data-video-id');
+		var wide = $this.attr('data-width');
+		mediaLink(type, url, vid, wide);
 	});
 });
 </script>
