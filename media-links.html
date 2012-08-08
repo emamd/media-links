@@ -5,12 +5,13 @@
 	possible attributes:
 	data-type="" - type of media. 
 	data-url="" - url of image, document, etc.
-	data-id="" - id of video to pull in
+	data-vid="" - id of video to pull in
 	data-width="" - width of graphic, document, etc.
 -->
 
 <link href="/includes/js/css/jquery-ui-1.8.14.custom.css" media="all" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://s3.documentcloud.org/notes/loader.js"></script>
 
 <style type="text/css">
 	.media-link  {font-weight: bold; color:#006DA2; border-bottom: 1px dotted #006DA2;}
@@ -35,7 +36,17 @@
 </style>
 
 <script type="text/javascript">
-function mediaLink(type, url, wide){
+
+
+function mediaLink(type, url, wide, vid){
+	// make sure the width is an integer, we'll need it at a couple points
+	wide = parseInt(wide);
+
+	// we need to calculate height for video embeds
+	if(type === "video-youtube" || type === "video-vimeo" || type === "video-brightcove" || type === "video-vimeo") {
+		var height = Math.floor(wide * 9 / 16);
+	}
+
 	// close button in the popup
 	var embedString = '<p class="close"><a>CLOSE <img src="http://www.latimes.com/includes/projects/population/images/close_18px.png" /></a></p>';
 
@@ -46,31 +57,36 @@ function mediaLink(type, url, wide){
 			break;
 
 		case "document":
-		// document embed code here
-			embedString += '';
-			break;
+			// document embed code here
+		    var ids = dcEmbedParse(url);
+		    var docID = ids[0];
+		    var noteID = ids[1];
+		    embedString += '<div class="DC-note-container" id="DC-note-'+ noteID + '"></div>';
+		    embedString += '<p style="text-align:left; font-weight:bold; padding-left:10px;">Click image to view the full document.</p>'
+		    docUrl = "http://www.documentcloud.org/documents/" + docID + "/annotations/" + noteID + ".js";			
+		    break;
 
 		case "video-brightcove":
-			var linkBaseUrl = document.URL;
-			embedString += "<object id='myExperience207503375' class='BrightcoveExperience'><param name='bgcolor' value='#FFFFFF' /><param name='wmode' value='transparent' /><param name='autoStart' value='false' /><param name='sectionName' value ='/' /><param name='contentItemType' value ='embed' /><param name='omnitureServer' value='latimes.com' /><param name='omnitureAcct' value='tribglobal' /><param name='width' value='980' /><param name='height' value='532' /><param name='playerID' value='782523707001' /><param name='playerKey' value='AQ~~,AAAAtkVbcwk~,5Rx45u37p7At4uUFYYBfI0whp8ObLWHD' /><param name='adServerURL' value='http://ad.doubleclick.net/pfadx/trb.latimes/hp' /><param name='additionalAdTargetingParams' value=';player=bc;pos=pre;vc=News;clip=71433116;sz=3x3;tile=13;ord=3083020945' /><param name='externalAds' value='true' /><param name='linkBaseURL' value='" + linkBaseURL + "' /><param name='isVid' value='true' /><param name='isUI' value='true' /><param name='dynamicStreaming' value='true' /><param name='showNoContentMessage' value='true' /><param name='@videoPlayer' value='ref:" + vid + "' /></object>";
+			var linkBaseURL = document.URL;
+			embedString += "<object id='myExperience207503375' class='BrightcoveExperience'><param name='bgcolor' value='#FFFFFF' /><param name='wmode' value='transparent' /><param name='autoStart' value='false' /><param name='sectionName' value ='/' /><param name='contentItemType' value ='embed' /><param name='omnitureServer' value='latimes.com' /><param name='omnitureAcct' value='tribglobal' /><param name='width' value='" + wide + "' /><param name='height' value='" + height + "' /><param name='playerID' value='782523707001' /><param name='playerKey' value='AQ~~,AAAAtkVbcwk~,5Rx45u37p7At4uUFYYBfI0whp8ObLWHD' /><param name='adServerURL' value='http://ad.doubleclick.net/pfadx/trb.latimes/hp' /><param name='additionalAdTargetingParams' value=';player=bc;pos=pre;vc=News;clip=71433116;sz=3x3;tile=13;ord=3083020945' /><param name='externalAds' value='true' /><param name='linkBaseURL' value='" + linkBaseURL + "' /><param name='isVid' value='true' /><param name='isUI' value='true' /><param name='dynamicStreaming' value='true' /><param name='showNoContentMessage' value='true' /><param name='@videoPlayer' value='ref:" + vid + "' /></object>";
 			break;
 
 		case "video-youtube":
-			embedString += '<iframe width="400" height="255" src="http://www.youtube.com/embed/' + vid + '?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>';
+			embedString += '<iframe width="' + wide + '" height="' + height + '" src="http://www.youtube.com/embed/' + vid + '?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>';
 			break;
 
 		case "video-vimeo":
-			embedString += '';
+			embedString += "<iframe src='http://player.vimeo.com/video/" + vid + "?autoplay=1' width='" + wide + "' height='" + height + "' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>";
 			break;
 
 		case "video-ndn":
-			embedString += '';
+			embedString += "<iframe src='http://embed.newsinc.com/Single/iframe.html?WID=2&VID=" + vid + "&freewheel=91002&sitesection=latimes&height=551&width=425' height=551 width=980 frameborder=no scrolling=no noresize marginwidth=0px marginheight=0px></iframe>";
 			break; 
 	}
 	// create the box to pop up
     var popUpBox = jQuery('<div></div>');
 	
-    var popUpWidth = parseInt(wide) + 30;
+    var popUpWidth = wide + 30;
 
     jQuery(popUpBox).html(embedString);
     var dialogRight = (jQuery(window).width()-popUpWidth)/2;
@@ -90,6 +106,12 @@ function mediaLink(type, url, wide){
         width: popUpWidth
     });
 
+    if(type === 'video-brightcove') {
+    	brightcove.createExperiences();
+    } else if (type === 'document') {
+	    dc.embed.loadNote(docUrl, {afterLoad: function(){jQuery('.DC-note-contents a').attr('target', '_blank')}});
+    }
+
     // Reset all variables, and blow the dialog box contents away, mostly for IE. Also done in beforeClose function above. 
     jQuery('.ui-widget-overlay, p.close a').bind('click', function(){
         jQuery(popUpBox).html('');
@@ -105,10 +127,26 @@ jQuery(document).ready(function(){
 	jQuery('.media-link').bind('click', function(){
 		$this = jQuery(this);
 		var type = $this.attr('data-type');
-		var url = $this.attr('data-url');
-		var vid = $this.attr('data-video-id');
-		var wide = $this.attr('data-width');
-		mediaLink(type, url, vid, wide);
+		var url = $this.attr('data-url') || "";
+		var wide = $this.attr('data-width') || "980";
+		var vid = $this.attr('data-vid') || "";
+		console.log(type + ', ' + url + ', ' + vid + ', ' + wide );
+		mediaLink(type, url, wide, vid);
 	});
 });
+
+var dcEmbedParse = function (url) {
+    // https://www.documentcloud.org/documents/396423-san-bernardino-bankruptcty-report.html#document/p5/a63666
+    if (!url) {
+        return false;
+    }
+    var parts = /(\d+)[-\w]+.html#document\/p\d+\/a(\d+)/.exec(url);
+    var docID = parts[1];
+    var noteID = parts[2];
+    return [docID, noteID];
+}
+
+function loadDocEmbed(url, embedString){
+
+}
 </script>
