@@ -3,10 +3,14 @@
 	Wrap words you want to appear as a popup with 
 	<span class="media-link"></span>
 	possible attributes:
-	data-type="" - type of media. 
+	Basic Options:
+    data-type="" - type of media. 
 	data-url="" - url of image, document, etc.
 	data-vid="" - id of video to pull in
 	data-width="" - width of graphic, document, etc.
+    
+    Advanced Options:
+    data-href="" - destination to link to, if an image
 -->
 
 <link href="/includes/js/css/jquery-ui-1.8.14.custom.css" media="all" rel="stylesheet" type="text/css" />
@@ -43,7 +47,7 @@
  * Version: 0.5
  */ 
 
-function mediaLink(type, url, wide, vid){
+function mediaLink(type, url, wide, vid, link){
 	// make sure the width is an integer, we'll need it at a couple points
 	wide = parseInt(wide);
 
@@ -58,7 +62,12 @@ function mediaLink(type, url, wide, vid){
 	// ok, here's our big switch statement to determine what gets displayed for each content type
 	switch (type) {
 		case "graphic":
-			embedString += '<img src="' + url + '" />';
+            if(link !== ""){
+                embedString += '<a href="' + link + '"><img src="' + url + '" /></a>'
+            }
+			else {
+                embedString += '<img src="' + url + '" />';
+            }
 			break;
 
 		case "document":
@@ -84,7 +93,7 @@ function mediaLink(type, url, wide, vid){
 			break;
 
 		case "video-ndn":
-			embedString += "<iframe src='http://embed.newsinc.com/Single/iframe.html?WID=2&VID=" + vid + "&freewheel=91002&sitesection=latimes&height=551&width=425' height=551 width=980 frameborder=no scrolling=no noresize marginwidth=0px marginheight=0px></iframe>";
+			embedString += "<iframe src='http://embed.newsinc.com/Single/iframe.html?WID=2&VID=" + vid + "&freewheel=91002&sitesection=latimes&height=" + height + "&width=" + width + "' height=551 width=980 frameborder=no scrolling=no noresize marginwidth=0px marginheight=0px></iframe>";
 			break; 
 	}
 	// create the box to pop up
@@ -134,8 +143,8 @@ jQuery(document).ready(function(){
 		var url = $this.attr('data-url') || "";
 		var wide = $this.attr('data-width') || "650";
 		var vid = $this.attr('data-vid') || "";
-		console.log(type + ', ' + url + ', ' + vid + ', ' + wide );
-		mediaLink(type, url, wide, vid);
+        var link = $this.attr('data-href') || "";
+		mediaLink(type, url, wide, vid, link);
 	});
 });
 
