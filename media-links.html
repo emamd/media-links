@@ -14,7 +14,7 @@
 -->
 
 <link href="/includes/js/css/jquery-ui-1.8.14.custom.css" media="all" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://latdevelopers.com/js/jqueryui/jquery-ui-1.7.3.custom.min.js"></script>
 <script type="text/javascript" src="http://s3.documentcloud.org/notes/loader.js"></script>
 
 <style type="text/css">
@@ -132,7 +132,7 @@ function mediaLink(type, url, wide, vid, link){
     }
 
     // Reset all variables, and blow the dialog box contents away, mostly for IE. Also done in beforeClose function above. 
-    jQuery('.ui-widget-overlay, p.close a').bind('click', function(){
+    jQuery('p.close a').bind('click', function(){
         jQuery(popUpBox).html('');
 		popUpBox.dialog('destroy');
 		embedString = "";
