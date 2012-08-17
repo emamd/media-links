@@ -18,8 +18,14 @@
 <script type="text/javascript" src="http://s3.documentcloud.org/notes/loader.js"></script>
 
 <style type="text/css">
-	.media-link  {color:#111; border-bottom: 1px dotted #111; background-color:#eee; padding:2px 5px; -webkit-transition: background-color .1s linear;	-moz-transition: background-color .1s linear; -o-transition: background-color .1s linear; -ms-transition: background-color .1s linear; transition: background-color .1s linear; }
-	.media-link:hover {background-color:#D2DDEA; cursor:pointer;}
+	.media-link  {color:#111; border-bottom: 1px dotted #111; background-color:#eee; padding:2px 5px 2px 24px; -webkit-transition: background-color .1s linear; -moz-transition: background-color .1s linear; -o-transition: background-color .1s linear; -ms-transition: background-color .1s linear; transition: background-color .1s linear; }
+    .media-link[data-type=graphic] {background: #eee url('http://www.latimes.com/media/graphic/2012-08/71861890.png') 2px 0px no-repeat;}
+    .media-link[data-type=video-brightcove],
+    .media-link[data-type=video-youtube],
+    .media-link[data-type=video-vimeo],
+    .media-link[data-type=video-ndn] {background: #eee url('http://www.latimes.com/media/graphic/2012-08/71861890.png') 2px -20px no-repeat;}
+    .media-link[data-type=document] {background: #eee url('http://www.latimes.com/media/graphic/2012-08/71861890.png') 2px -41px no-repeat;}
+    .media-link[data-type]:hover {background-color:#D2DDEA; cursor:pointer;}
 
     /* Document Cloud styles */
     .DC-note { border:0px; -webkit-box-shadow:0px 0px 0px #fff; box-shadow:0px 0px 0px 0px #fff; }
