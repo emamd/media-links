@@ -18,19 +18,21 @@
 <script type="text/javascript" src="http://s3.documentcloud.org/notes/loader.js"></script>
 
 <style type="text/css">
-	.media-link  {color:#111; border-bottom: 1px dotted #111; background-color:#eee; padding:2px 5px 2px 21px; -webkit-transition: background-color .1s linear; -moz-transition: background-color .1s linear; -o-transition: background-color .1s linear; -ms-transition: background-color .1s linear; transition: background-color .1s linear; }
-    .media-link[data-type=graphic] {background: #eee url('http://www.latimes.com/media/graphic/2012-08/71861890.png?v=5') 2px -22px no-repeat;}
+	.media-link  {color:#111; border-bottom: 1px dotted #111; padding:2px 5px 2px 21px; -webkit-transition: background-color .1s linear; -moz-transition: background-color .1s linear; -o-transition: background-color .1s linear; -ms-transition: background-color .1s linear; transition: background-color .1s linear; }
+    .media-link[data-type=graphic] {background: #fff url('http://www.latimes.com/media/graphic/2012-08/72045156.png') 0 -48px no-repeat;}
     .media-link[data-type=video-brightcove],
     .media-link[data-type=video-youtube],
     .media-link[data-type=video-vimeo],
-    .media-link[data-type=video-ndn] {background: #eee url('http://www.latimes.com/media/graphic/2012-08/71861890.png?v=5') 2px -42px no-repeat;}
-    .media-link[data-type=document] {background: #eee url('http://www.latimes.com/media/graphic/2012-08/71861890.png?v=5') 2px 0px no-repeat;}
+    .media-link[data-type=video-ndn] {background: #fff url('http://www.latimes.com/media/graphic/2012-08/72045156.png') 0px -70px no-repeat;}
+    .media-link[data-type=document] {background: #fff url('http://www.latimes.com/media/graphic/2012-08/72045156.png') 0 -24px no-repeat;}
+    .media-link[data-type=audio] {background: #fff url('http://www.latimes.com/media/graphic/2012-08/72045156.png') 0 -90px no-repeat;}
+    .media-link[data-type=photo] {background: #fff url('http://www.latimes.com/media/graphic/2012-08/72045156.png') 0 -1px no-repeat;}
     .media-link[data-type]:hover {background-color:#D2DDEA; cursor:pointer;}
 
     /* Document Cloud styles */
     .DC-note { border:0px; -webkit-box-shadow:0px 0px 0px #fff; box-shadow:0px 0px 0px 0px #fff; }
     .DC-note .DC-note-title { text-align:left; font-size: 24px; font-family:"Georgia", "Times New Roman", Times, serif;}
-    .DC-note .DC-note-excerpt-wrap { border: 3px solid #FFE325; }
+    .DC-note .DC-note-excerpt-wrap { border: 2px solid #999; }
 
     /* Dialog Box Styles */
     .ui-dialog .ui-dialog-content {background-color:#fff;}
@@ -68,6 +70,7 @@ function mediaLink(type, url, wide, vid, link){
 	// ok, here's our big switch statement to determine what gets displayed for each content type
 	switch (type) {
 		case "graphic":
+        case "photo":
             if(link !== ""){
                 embedString += '<a href="' + link + '"><img src="' + url + '" /></a>'
             }
