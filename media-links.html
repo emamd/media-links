@@ -75,10 +75,12 @@ function mediaLink(type, url, wide, vid, link, timecode){
 		case "graphic":
         case "photo":
             if(link !== ""){
-                embedString += '<a href="' + link + '"><img src="' + url + '" /></a>'
+                embedStringConstruct = ['<a href="', link, '"><img src="', url, '" /></a>'];
+                embedString += embedStringConstruct.join('');
             }
 			else {
-                embedString += '<img src="' + url + '" />';
+                embedStringConstruct = ['<img src="', url, '" />'];
+                embedString += embedStringConstruct.join('');
             }
 			break;
 
@@ -93,25 +95,28 @@ function mediaLink(type, url, wide, vid, link, timecode){
 
 		case "video-brightcove":
 			var linkBaseURL = document.URL;
-			embedString += "<object id='myExperience207503375' class='BrightcoveExperience'><param name='bgcolor' value='#FFFFFF' /><param name='wmode' value='transparent' /><param name='autoStart' value='false' /><param name='sectionName' value ='/' /><param name='contentItemType' value ='embed' /><param name='omnitureServer' value='latimes.com' /><param name='omnitureAcct' value='tribglobal' /><param name='width' value='" + wide + "' /><param name='height' value='" + height + "' /><param name='playerID' value='782523707001' /><param name='playerKey' value='AQ~~,AAAAtkVbcwk~,5Rx45u37p7At4uUFYYBfI0whp8ObLWHD' /><param name='adServerURL' value='http://ad.doubleclick.net/pfadx/trb.latimes/hp' /><param name='additionalAdTargetingParams' value=';player=bc;pos=pre;vc=News;clip=71433116;sz=3x3;tile=13;ord=3083020945' /><param name='externalAds' value='true' /><param name='linkBaseURL' value='" + linkBaseURL + "' /><param name='isVid' value='true' /><param name='isUI' value='true' /><param name='dynamicStreaming' value='true' /><param name='showNoContentMessage' value='true' /><param name='@videoPlayer' value='ref:" + vid + "' /></object>";
+			embedStringConstruct = ["<object id='myExperience207503375' class='BrightcoveExperience'><param name='bgcolor' value='#FFFFFF' /><param name='wmode' value='transparent' /><param name='autoStart' value='false' /><param name='sectionName' value ='/' /><param name='contentItemType' value ='embed' /><param name='omnitureServer' value='latimes.com' /><param name='omnitureAcct' value='tribglobal' /><param name='width' value='", wide, "' /><param name='height' value='", height, "' /><param name='playerID' value='782523707001' /><param name='playerKey' value='AQ~~,AAAAtkVbcwk~,5Rx45u37p7At4uUFYYBfI0whp8ObLWHD' /><param name='adServerURL' value='http://ad.doubleclick.net/pfadx/trb.latimes/hp' /><param name='additionalAdTargetingParams' value=';player=bc;pos=pre;vc=News;clip=71433116;sz=3x3;tile=13;ord=3083020945' /><param name='externalAds' value='true' /><param name='linkBaseURL' value='", linkBaseURL, "' /><param name='isVid' value='true' /><param name='isUI' value='true' /><param name='dynamicStreaming' value='true' /><param name='showNoContentMessage' value='true' /><param name='@videoPlayer' value='ref:", vid, "' /></object>"];
+            embedString += embedStringConstruct.join('');
 			break;
 
 		case "video-youtube":
             if (timecode !== ""){
-	       		embedString += '<iframe width="' + wide + '" height="' + height + '" src="http://www.youtube.com/embed/' + vid + '?rel=0&autoplay=1#t=' + timecode + '" frameborder="0" allowfullscreen></iframe>';
+                var embedStringConstruct = ['<iframe width="', wide, '" height="', height, '" src="http://www.youtube.com/embed/', vid, '?rel=0&autoplay=1#t=', timecode, '" frameborder="0" allowfullscreen></iframe>'];
+	       		embedString += embedStringConstruct.join('');
             } else {
-                console.log(timecode);
-                embedString += '<iframe width="' + wide + '" height="' + height + '" src="http://www.youtube.com/embed/' + vid + '?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>';                
+                var embedStringConstruct = ['<iframe width="', wide, '" height="', height, '" src="http://www.youtube.com/embed/', vid, '?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>'];
+                embedString += embedStringConstruct.join('');                
             }
-
 			break;
 
 		case "video-vimeo":
-			embedString += "<iframe src='http://player.vimeo.com/video/" + vid + "?autoplay=1' width='" + wide + "' height='" + height + "' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>";
+			embedStringConstruct = ["<iframe src='http://player.vimeo.com/video/", vid, "?autoplay=1' width='", wide, "' height='", height, "' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"];
+            embedString += embedStringConstruct.join('');
 			break;
 
 		case "video-ndn":
-			embedString += "<iframe src='http://embed.newsinc.com/Single/iframe.html?WID=2&VID=" + vid + "&freewheel=91002&sitesection=latimes&height=" + height + "&width=" + width + "' height=551 width=980 frameborder=no scrolling=no noresize marginwidth=0px marginheight=0px></iframe>";
+            embedStringConstruct = ["<iframe src='http://embed.newsinc.com/Single/iframe.html?WID=2&VID=", vid, "&freewheel=91002&sitesection=latimes&height=", height, "&width=", width, "' height=551 width=980 frameborder=no scrolling=no noresize marginwidth=0px marginheight=0px></iframe>"];
+			embedString += embedStringConstruct.join('');
 			break; 
 	}
 	// create the box to pop up
