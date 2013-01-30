@@ -1,25 +1,23 @@
 <!-- 
-	Runtime:include this blurb at the bottom of your story. 
-	Wrap words you want to appear as a popup with 
-	<span class="media-link"></span>
-	possible attributes:
-	Basic Options:
+    Runtime:include this blurb at the bottom of your story. 
+    Wrap words you want to appear as a popup with 
+    <span class="media-link"></span>
+    possible attributes:
+    Basic Options:
     data-type="" - type of media. 
-	data-url="" - url of image, document, etc.
-	data-vid="" - id of video to pull in
-	data-width="" - width of graphic, document, etc.
+    data-url="" - url of image, document, etc.
+    data-vid="" - id of video to pull in
+    data-width="" - width of graphic, document, etc.
     data-time="" - time video should start on - only works for YT right now.
 
     Advanced Options:
     data-href="" - destination to link to, if an image
 -->
 
-<link href="/includes/js/css/jquery-ui-1.8.14.custom.css" media="all" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="http://latdevelopers.com/js/jqueryui/jquery-ui-1.7.3.custom.min.js"></script>
 <script type="text/javascript" src="http://s3.documentcloud.org/notes/loader.js"></script>
 
 <style type="text/css">
-	.media-link  {color:#111; border-bottom: 1px dotted #111; padding:2px 5px 2px 21px; -webkit-transition: background-color .1s linear; -moz-transition: background-color .1s linear; -o-transition: background-color .1s linear; -ms-transition: background-color .1s linear; transition: background-color .1s linear; }
+    .media-link  {color:#111; border-bottom: 1px dotted #111; padding:2px 5px 2px 21px; -webkit-transition: background-color .1s linear; -moz-transition: background-color .1s linear; -o-transition: background-color .1s linear; -ms-transition: background-color .1s linear; transition: background-color .1s linear; }
     .media-link[data-type=graphic] {background: #fff url('http://www.latimes.com/media/graphic/2012-08/72045156.png') 0 -48px no-repeat;}
     .media-link[data-type=video-brightcove],
     .media-link[data-type=video-youtube],
@@ -36,18 +34,23 @@
     .DC-note .DC-note-excerpt-wrap { border: 2px solid #999; }
 
     /* Dialog Box Styles */
-    .ui-dialog.ui-widget {-webkit-box-shadow:2px 3px 6px #333; box-shadow:2px 3px 6px #333;}
-    .ui-dialog .ui-dialog-content {background-color:#fff;}
-   	.ui-widget-overlay {background:#fff url(''); opacity: .70; filter:Alpha(Opacity=70); position:absolute; top:0; left:0;}
-	div.ui-dialog.ui-widget.video-player div.ui-dialog-titlebar {display:none;}
-	div.ui-dialog.ui-widget.video-player .ui-dialog-content {padding:5px 15px 15px 15px;}
-	.ui-widget-content, .ui-resizable-w, .ui-resizable-e {background:#fff url('');}
-	.ui-widget-content h3 {text-align:left; font-size:20px;}
-	.ui-widget-content p.description {text-align:left; margin-bottom:10px;}
-	.ui-widget-content p.close {margin-bottom:10px; font-family:'Arial', 'Helvetica', sans-serif; text-align:right; position:relative; }
-	p.close img {display:inline; position: relative; top: 3px;}
-    p.close a {font-weight:bold; color:#999;}	
+    .ui-dialog.ui-widget { }
+    .ui-dialog .ui-dialog-content { }
+    .ui-widget-overlay {background:#fff url(''); opacity: .70; filter:Alpha(Opacity=70); position:absolute; top:0; left:0;}
+    div.ui-dialog.ui-widget.video-player div.ui-dialog-titlebar {display:none;}
+    div.ui-dialog.ui-widget.video-player .ui-dialog-content {padding:5px 15px 15px 15px;}
+    .ui-widget-content h3 {text-align:left; font-size:20px;}
+    .ui-widget-content p.description {text-align:left; margin-bottom:10px;}
+    .ui-widget-content p.close {margin-bottom:10px; font-family:'Arial', 'Helvetica', sans-serif; text-align:right; position:relative; }
+    p.close img {display:inline; position: relative; top: 3px;}
+    p.close a {font-weight:bold; color:#999;}   
+    #video-holder{ width:1010px; display:none; top:0; left:0; background-color:#fff; z-index:10001; -webkit-box-shadow:2px 3px 6px #333; box-shadow:2px 3px 6px #333; border:1px solid #696969; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px;}
+    #video-holder p.close a {color:#999; }
+    #widget-overlay {height:100%; width:100%; position:fixed; top:0; left:0; background:#fff url(''); opacity: .70; filter:Alpha(Opacity=70); display:none; z-index:10000;}    
 </style>
+
+<div id="video-holder" class="ui-dialog ui-widget video-player"></div>
+<div id="widget-overlay"></div>
 
 <script type="text/javascript">
 /* 
@@ -59,117 +62,157 @@
 
 function mediaLink(type, url, wide, vid, link, timecode){
 
-	// make sure the width is an integer, we'll need it at a couple points
-	wide = parseInt(wide);
+    // make sure the width is an integer, we'll need it at a couple points
+    wide = parseInt(wide);
 
-	// we need to calculate height for video embeds
-	if(type === "video-youtube" || type === "video-vimeo" || type === "video-brightcove" || type === "video-vimeo") {
-		var height = Math.floor(wide * 9 / 16);
-	}
+    // we need to calculate height for video embeds
+    if(type === "video-youtube" || type === "video-vimeo" || type === "video-brightcove" || type === "video-vimeo") {
+        var height = Math.floor(wide * 9 / 16);
+    }
 
-	// close button in the popup
-	var embedString = '<p class="close"><a>CLOSE <img src="http://www.latimes.com/includes/projects/population/images/close_18px.png" /></a></p>';
+    // close button in the popup
+    var embedString = '<div class="ui-dialog-content ui-widget-content"><p class="close"><a>CLOSE <img src="http://www.latimes.com/includes/projects/population/images/close_18px.png" /></a></p>';
 
-	// ok, here's our big switch statement to determine what gets displayed for each content type
-	switch (type) {
-		case "graphic":
+    var vignette_box = jQuery('#video-holder');
+    var overlay = jQuery('#widget-overlay');
+
+    // ok, here's our big switch statement to determine what gets displayed for each content type
+    switch (type) {
+        case "graphic":
         case "photo":
             if(link !== ""){
                 embedStringConstruct = ['<a href="', link, '"><img src="', url, '" /></a>'];
                 embedString += embedStringConstruct.join('');
             }
-			else {
+            else {
                 embedStringConstruct = ['<img src="', url, '" />'];
                 embedString += embedStringConstruct.join('');
             }
-			break;
+            break;
 
-		case "document":
-		    var ids = dcEmbedParse(url);
-		    var docID = ids[0];
-		    var noteID = ids[1];
-		    embedString += '<div class="DC-note-container" id="DC-note-'+ noteID + '"></div>';
-		    embedString += '<p style="text-align:left; font-weight:bold; padding-left:10px;">Click image to view the full document.</p>'
-		    docUrl = "http://www.documentcloud.org/documents/" + docID + "/annotations/" + noteID + ".js";			
-		    break;
+        case "document":
+            var ids = dcEmbedParse(url);
+            var docID = ids[0];
+            var noteID = ids[1];
+            embedString += '<div class="DC-note-container" id="DC-note-'+ noteID + '"></div>';
+            embedString += '<p style="text-align:left; font-weight:bold; padding-left:10px;">Click image to view the full document.</p>'
+            docUrl = "http://www.documentcloud.org/documents/" + docID + "/annotations/" + noteID + ".js";          
+            break;
 
-		case "video-brightcove":
-			var linkBaseURL = document.URL;
-			embedStringConstruct = ["<object id='myExperience207503375' class='BrightcoveExperience'><param name='bgcolor' value='#FFFFFF' /><param name='wmode' value='transparent' /><param name='autoStart' value='false' /><param name='sectionName' value ='/' /><param name='contentItemType' value ='embed' /><param name='omnitureServer' value='latimes.com' /><param name='omnitureAcct' value='tribglobal' /><param name='width' value='", wide, "' /><param name='height' value='", height, "' /><param name='playerID' value='782523707001' /><param name='playerKey' value='AQ~~,AAAAtkVbcwk~,5Rx45u37p7At4uUFYYBfI0whp8ObLWHD' /><param name='adServerURL' value='http://ad.doubleclick.net/pfadx/trb.latimes/hp' /><param name='additionalAdTargetingParams' value=';player=bc;pos=pre;vc=News;clip=71433116;sz=3x3;tile=13;ord=3083020945' /><param name='externalAds' value='true' /><param name='linkBaseURL' value='", linkBaseURL, "' /><param name='isVid' value='true' /><param name='isUI' value='true' /><param name='dynamicStreaming' value='true' /><param name='showNoContentMessage' value='true' /><param name='@videoPlayer' value='ref:", vid, "' /></object>"];
+        case "video-brightcove":
+            var linkBaseURL = document.URL;
+            embedStringConstruct = ["<object id='myExperience207503375' class='BrightcoveExperience'><param name='bgcolor' value='#FFFFFF' /><param name='wmode' value='transparent' /><param name='autoStart' value='false' /><param name='sectionName' value ='/' /><param name='contentItemType' value ='embed' /><param name='omnitureServer' value='latimes.com' /><param name='omnitureAcct' value='tribglobal' /><param name='width' value='", wide, "' /><param name='height' value='", height, "' /><param name='playerID' value='782523707001' /><param name='playerKey' value='AQ~~,AAAAtkVbcwk~,5Rx45u37p7At4uUFYYBfI0whp8ObLWHD' /><param name='adServerURL' value='http://ad.doubleclick.net/pfadx/trb.latimes/hp' /><param name='additionalAdTargetingParams' value=';player=bc;pos=pre;vc=News;clip=71433116;sz=3x3;tile=13;ord=3083020945' /><param name='externalAds' value='true' /><param name='linkBaseURL' value='", linkBaseURL, "' /><param name='isVid' value='true' /><param name='isUI' value='true' /><param name='dynamicStreaming' value='true' /><param name='showNoContentMessage' value='true' /><param name='@videoPlayer' value='ref:", vid, "' /></object>"];
             embedString += embedStringConstruct.join('');
-			break;
+            break;
 
-		case "video-youtube":
+        case "video-youtube":
             if (timecode !== ""){
                 var embedStringConstruct = ['<iframe width="', wide, '" height="', height, '" src="http://www.youtube.com/embed/', vid, '?rel=0&autoplay=1#t=', timecode, '" frameborder="0" allowfullscreen></iframe>'];
-	       		embedString += embedStringConstruct.join('');
+                embedString += embedStringConstruct.join('');
             } else {
                 var embedStringConstruct = ['<iframe width="', wide, '" height="', height, '" src="http://www.youtube.com/embed/', vid, '?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>'];
                 embedString += embedStringConstruct.join('');                
             }
-			break;
+            break;
 
-		case "video-vimeo":
-			embedStringConstruct = ["<iframe src='http://player.vimeo.com/video/", vid, "?autoplay=1' width='", wide, "' height='", height, "' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"];
+        case "video-vimeo":
+            embedStringConstruct = ["<iframe src='http://player.vimeo.com/video/", vid, "?autoplay=1' width='", wide, "' height='", height, "' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"];
             embedString += embedStringConstruct.join('');
-			break;
+            break;
 
-		case "video-ndn":
+        case "video-ndn":
             embedStringConstruct = ["<iframe src='http://embed.newsinc.com/Single/iframe.html?WID=2&VID=", vid, "&freewheel=91002&sitesection=latimes&height=", height, "&width=", width, "' height=551 width=980 frameborder=no scrolling=no noresize marginwidth=0px marginheight=0px></iframe>"];
-			embedString += embedStringConstruct.join('');
-			break; 
-	}
-	// create the box to pop up
-    var popUpBox = jQuery('<div></div>');
-	
+            embedString += embedStringConstruct.join('');
+            break; 
+    }
+    
+    embedString += '</div>';
+
     var popUpWidth = wide + 30;
 
-    jQuery(popUpBox).html(embedString);
+    jQuery(vignette_box).html(embedString);
     var dialogRight = (jQuery(window).width()-popUpWidth)/2;
     var dialogTop = (jQuery(window).height()-551)/2;
 
-    jQuery(popUpBox).dialog({
-        beforeClose: function(event, ui) { 
-            jQuery(popUpBox).html('');
-		    popUpBox.dialog('destroy');
-		    embedString = "";
-		    },
-		dialogClass: 'video-player',
-        modal:true,
-        position: [dialogRight,dialogTop],
-        resizable: false,
-        show: 'slide',
-        width: popUpWidth
+    vignette_box.css({
+        "display":"block",
+        "position":"fixed",
+        "width": popUpWidth,
+        "top": dialogTop,
+        "left": dialogRight         
     });
 
+    var docWidth = jQuery(document).width();
+    var docHeight = jQuery(document).height();
+
+    overlay.css({
+        "width": docWidth,
+        "height": docHeight,
+        "display": "block"
+    });
+
+
     if(type === 'video-brightcove') {
-    	brightcove.createExperiences();
+        brightcove.createExperiences();
     } else if (type === 'document') {
-	    dc.embed.loadNote(docUrl, {afterLoad: function(){jQuery('.DC-note-contents a').attr('target', '_blank')}});
+        dc.embed.loadNote(docUrl, {afterLoad: function(){jQuery('.DC-note-contents a').attr('target', '_blank')}});
     }
 
-    // Reset all variables, and blow the dialog box contents away, mostly for IE. Also done in beforeClose function above. 
-    jQuery('p.close a').bind('click', function(){
-        jQuery(popUpBox).html('');
-		popUpBox.dialog('destroy');
-		embedString = "";
-		return false;
-	});
+    // Binding keystrokes 
+    document.onkeydown = function(evt) {
+        if(window.event){
+            evt = window.event;
+        }
+        switch(evt.keyCode){
+            // escape key
+            case 27:
+                jQuery('p.close').click();
+                break;
+        }
+    }
+
+    // bind close action
+    jQuery('#widget-overlay, .close').bind('click', function(e){
+        e.preventDefault();
+        vignette_box.css({
+            "display":"none"
+        });
+        overlay.css({
+            "display":"none"
+        });
+
+        brightcove.removeExperience(vid);
+        jQuery(vignette_box).html('');
+        embed_code = "";
+
+        // UnBinding keystrokes 
+        document.onkeydown = function(evt) {
+            if(window.event){
+                evt = window.event;
+            }
+            switch(evt.keyCode){
+                // escape key
+                case 27:
+                    break;
+            }
+        }
+
+    });
 
     return false;
 }
 
 jQuery(document).ready(function(){
-	jQuery('.media-link').bind('click', function(){
-		$this = jQuery(this);
-		var type = $this.attr('data-type');
-		var url = $this.attr('data-url') || "";
-		var wide = $this.attr('data-width') || "650";
-		var vid = $this.attr('data-vid') || "";
+    jQuery('.media-link').bind('click', function(){
+        $this = jQuery(this);
+        var type = $this.attr('data-type');
+        var url = $this.attr('data-url') || "";
+        var wide = $this.attr('data-width') || "650";
+        var vid = $this.attr('data-vid') || "";
         var link = $this.attr('data-href') || "";
         var timecode = $this.attr('data-time') || "";
-		mediaLink(type, url, wide, vid, link, timecode);
-	});
+        mediaLink(type, url, wide, vid, link, timecode);
+    });
 });
 
 var dcEmbedParse = function (url) {
