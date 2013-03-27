@@ -62,8 +62,14 @@
 
 function mediaLink(type, url, wide, vid, link, timecode){
 
-    // make sure the width is an integer, we'll need it at a couple points
-    wide = parseInt(wide);
+    // make sure the width is an integer
+    var wide = parseInt(wide),
+        winWidth = jQuery(window).width();
+
+    // if the width is larget than the window width, then adjust it to something smaller
+    if (wide >= winWidth) {
+        wide = winWidth - 50;
+    } 
 
     // we need to calculate height for video embeds
     if(type === "video-youtube" || type === "video-vimeo" || type === "video-brightcove" || type === "video-vimeo") {
