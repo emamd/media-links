@@ -124,6 +124,11 @@ function mediaLink(type, url, wide, vid, link, timecode){
             embedStringConstruct = ["<iframe src='http://embed.newsinc.com/Single/iframe.html?WID=2&VID=", vid, "&freewheel=91002&sitesection=latimes&height=", height, "&width=", width, "' height=551 width=980 frameborder=no scrolling=no noresize marginwidth=0px marginheight=0px></iframe>"];
             embedString += embedStringConstruct.join('');
             break; 
+
+        case "audio":
+            embedStringConstruct = ['<iframe width="100%" height="100" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%', vid, '"></iframe>'];
+            embedString += embedStringConstruct.join('');
+            break;
     }
     
     embedString += '</div>';
