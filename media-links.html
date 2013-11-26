@@ -9,12 +9,14 @@
     data-vid="" - id of video to pull in
     data-width="" - width of graphic, document, etc.
     data-time="" - time video should start on - only works for YT right now.
+    data-caption="" - caption that should appear under the element, usually for photos or graphics
 
     Advanced Options:
     data-href="" - destination to link to, if an image
 -->
 
 <script type="text/javascript" src="http://s3.documentcloud.org/notes/loader.js"></script>
+<script src="http://s3.documentcloud.org/viewer/loader.js"></script>
 
 <style type="text/css">
     .media-link  {color:#111; border-bottom: 1px dotted #111; padding:2px 5px 2px 21px; -webkit-transition: background-color .1s linear; -moz-transition: background-color .1s linear; -o-transition: background-color .1s linear; -ms-transition: background-color .1s linear; transition: background-color .1s linear; }
@@ -60,7 +62,7 @@
  * Version: 1.0
  */ 
 
-function mediaLink(type, url, wide, vid, link, timecode){
+function mediaLink(type, url, wide, vid, link, timecode, caption){
 
     // make sure the width is an integer
     var wide = parseInt(wide),
@@ -88,10 +90,16 @@ function mediaLink(type, url, wide, vid, link, timecode){
         case "photo":
             if(link !== ""){
                 embedStringConstruct = ['<a href="', link, '"><img src="', url, '" /></a>'];
+                if (caption !== ""){
+                    embedStringConstruct.push['<p>', caption, '</p>']
+                }
                 embedString += embedStringConstruct.join('');
             }
             else {
                 embedStringConstruct = ['<img src="', url, '" />'];
+                if (caption !== ""){
+                    embedStringConstruct.push['<p>', caption, '</p>']
+                }                
                 embedString += embedStringConstruct.join('');
             }
             break;
@@ -103,6 +111,10 @@ function mediaLink(type, url, wide, vid, link, timecode){
             embedString += '<div class="DC-note-container" id="DC-note-'+ noteID + '"></div>';
             embedString += '<p style="text-align:left; font-weight:bold; padding-left:10px;">Click image to view the full document.</p>'
             docUrl = "http://www.documentcloud.org/documents/" + docID + "/annotations/" + noteID + ".js";          
+            break;
+
+        case "document-full":
+                embedString += '<div style="height:600px;" id="'+ url + '"></div>';
             break;
 
         case "video-brightcove":
@@ -167,6 +179,10 @@ function mediaLink(type, url, wide, vid, link, timecode){
         brightcove.createExperiences();
     } else if (type === 'document') {
         dc.embed.loadNote(docUrl, {afterLoad: function(){jQuery('.DC-note-contents a').attr('target', '_blank')}});
+    } else if (type === 'document-full') {
+        DV.load('http://www.documentcloud.org/documents/' + url + '.js', {
+            container : '#' + url
+        });
     }
 
     // Binding keystrokes 
@@ -222,7 +238,8 @@ jQuery(document).ready(function(){
         var vid = $this.attr('data-vid') || "";
         var link = $this.attr('data-href') || "";
         var timecode = $this.attr('data-time') || "";
-        mediaLink(type, url, wide, vid, link, timecode);
+        var caption = $this.attr('data-caption') || "";
+        mediaLink(type, url, wide, vid, link, timecode, caption);
     });
 });
 
